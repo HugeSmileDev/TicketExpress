@@ -1,0 +1,90 @@
+syntax = "proto3";
+package ticketingapp;
+
+option go_package = "proto-gen/ticket";
+
+// TicketService provides methods for ticket purchasing and management.
+service TicketService {
+    rpc PurchaseTicket(PurchaseTicketRequest) returns (PurchaseTicketResponse);
+    rpc GetReceiptDetails(ReceiptDetailsRequest) returns (ReceiptDetailsResponse);
+    rpc GetUserSeats(UserSeatsRequest) returns (UserSeatsResponse);
+    rpc RemoveUser(RemoveUserRequest) returns (RemoveUserResponse);
+    rpc ModifyUserSeat(ModifyUserSeatRequest) returns (ModifyUserSeatResponse);
+}
+
+// PurchaseTicketRequest represents a request to purchase a ticket.
+message PurchaseTicketRequest {
+   Ticket ticket = 1;
+}
+
+message Ticket {
+string from = 1;
+    string to = 2;
+    string user_first_name = 3;
+    string user_last_name = 4;
+    string user_email = 5;
+    string user_id = 6;
+    Section section = 7;  // Enum for predefined sections.
+    string seat_no = 8;  // Added seat_no field
+}
+// Enum for Section values.
+enum Section {
+    SECTION_UNSPECIFIED = 0;
+    SECTION_A = 1;
+    SECTION_B = 2;
+}
+
+
+message PurchaseTicketResponse {
+    Receipt receipt = 1;
+}
+
+message ReceiptDetailsRequest {
+    string user_id = 1;
+}
+
+message Receipt {
+    string from = 1;
+    string to = 2;
+    string user_first_name = 3;
+    string user_last_name = 4;
+    string user_email = 5;
+    string price = 6;
+    string seat_no = 7;
+    Section section = 8;
+}
+
+message ReceiptDetailsResponse {
+    Receipt receipt = 1;
+}
+
+message UserSeatsRequest {
+    Section section = 1;
+}
+
+message UserSeatsResponse {
+    repeated SeatAssignment seat_assignments = 1;
+
+    message SeatAssignment {
+        string user_id = 1;
+        string user_seat = 2;
+    }
+}
+
+message RemoveUserRequest {
+    string user_id = 1;
+}
+
+message RemoveUserResponse {
+    string message = 1;
+}
+
+message ModifyUserSeatRequest {
+    string user_id = 1;
+    Section new_section = 2;
+    string new_seat_no = 3;  
+}
+
+message ModifyUserSeatResponse {
+    string message = 1;
+}
