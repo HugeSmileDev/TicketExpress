@@ -4,22 +4,18 @@ import (
 	"ticketing_app/proto-gen/ticket"
 )
 
-type TicketServiceServer interface {
-	ticket.TicketServiceServer
-}
-
-// TrainService represents a service for managing train tickets.
+// TrainService represents the train service.
 type TrainService struct {
-	ticket.UnimplementedTicketServiceServer
-	receiptMap map[string]*ticket.Ticket
+	ticket.UnimplementedTrainTicketServiceServer
+	receiptMap map[string]*ticket.Receipt
 	sectionA   map[string][]string
 	sectionB   map[string][]string
 }
 
-// NewTrainService initializes and returns a new TrainService.
-func NewTicketServiceServer() TicketServiceServer {
+// NewTrainService creates a new instance of TrainService.
+func NewTrainService() *TrainService {
 	return &TrainService{
-		receiptMap: make(map[string]*ticket.Ticket),
+		receiptMap: make(map[string]*ticket.Receipt),
 		sectionA:   make(map[string][]string),
 		sectionB:   make(map[string][]string),
 	}
