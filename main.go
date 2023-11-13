@@ -5,7 +5,7 @@ import (
 	"net"
 
 	"ticketing_app/api"
-	"ticketing_app/proto-gen/ticket"
+	ticket "ticketing_app/proto-gen/ticket"
 
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/reflection"
@@ -18,9 +18,9 @@ func main() {
 	}
 
 	s := grpc.NewServer()
-	ticket_server := api.NewTicketServiceServer()
+	ticket_server := api.NewTrainService()
 
-	ticket.RegisterTicketServiceServer(s, ticket_server)
+	ticket.RegisterTrainTicketServiceServer(s, ticket_server)
 	reflection.Register(s)
 
 	log.Println("Server listening on :4080")

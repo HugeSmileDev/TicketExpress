@@ -3,43 +3,43 @@ package api
 import (
 	"context"
 	"fmt"
-	"ticketing_app/proto-gen/ticket"
+	ticketingapp "ticketing_app/proto-gen/ticket"
 )
 
-// ModifyUserSeat updates a user's seat assignment.
-func (s *TrainService) ModifyUserSeat(ctx context.Context, req *ticket.ModifyUserSeatRequest) (*ticket.ModifyUserSeatResponse, error) {
+// ModifySeat updates a user's seat assignment.
+func (s *TrainService) ModifySeat(ctx context.Context, req *ticketingapp.ModifySeatRequest) (*ticketingapp.ModifySeatResponse, error) {
 	userDetails, exists := s.receiptMap[req.UserId]
 	if !exists {
 		return nil, fmt.Errorf("user with ID '%s' not found", req.UserId)
 	}
 
-	if err := s.updateUserSection(userDetails, req.NewSection, req.NewSeatNo); err != nil {
+	if err := s.updateUserSeat(userDetails, req.NewSeatNumber); err != nil {
 		return nil, err
 	}
 
-	return &ticket.ModifyUserSeatResponse{Message: "User seat modified successfully"}, nil
+	return &ticketingapp.ModifySeatResponse{Success: true}, nil
 }
-func (s *TrainService) updateUserSection(userDetails *ticket.Ticket, newSection ticket.Section, newSeatNo string) error {
-	// Remove user from old section
-	s.removeFromSectionMap(userDetails.Section, userDetails.SeatNo, userDetails.UserId)
+
+func (s *TrainService) updateUserSeat(userDetails *ticketingapp.Receipt, newSeatNumber string) error {
 
 	// Check if the new seat is available before assigning
-	sectionMap := s.getSectionMap(newSection)
-	if _, taken := sectionMap[newSeatNo]; taken {
-		return fmt.Errorf("seat %s in section %s is already taken", newSeatNo, newSection)
+	sectionMap := s.getSectionMap(userDetails.Section)
+	if _, taken := sectionMap[newSeatNumber]; taken {
+		return fmt.Errorf("seat %s in section %s is already taken", newSeatNumber, userDetails.Section)
 	}
 
-	// Add user to the new section
-	s.addToSectionMap(newSection, newSeatNo, userDetails.UserId)
+	// Remove user from the old seat
+	s.removeFromSectionMap(userDetails.Section, userDetails.SeatNo, userDetails.User.UserId)
 
-	// Update the user's section and seat information
-	userDetails.Section = newSection
-	userDetails.SeatNo = newSeatNo
+	// Add user to the new seat
+	s.addToSectionMap(userDetails.Section, newSeatNumber, userDetails.User.UserId)
+
+	userDetails.SeatNo = newSeatNumber
 
 	return nil
 }
 
-func (s *TrainService) removeFromSectionMap(section ticket.Section, seatNo string, userId string) {
+func (s *TrainService) removeFromSectionMap(section string, seatNo string, userId string) {
 	sectionMap := s.getSectionMap(section)
 	if users, ok := sectionMap[seatNo]; ok {
 		for i, id := range users {
@@ -51,7 +51,7 @@ func (s *TrainService) removeFromSectionMap(section ticket.Section, seatNo strin
 	}
 }
 
-func (s *TrainService) addToSectionMap(section ticket.Section, seatNo string, userId string) {
+func (s *TrainService) addToSectionMap(section string, seatNo string, userId string) {
 	sectionMap := s.getSectionMap(section)
 	sectionMap[seatNo] = append(sectionMap[seatNo], userId)
 }

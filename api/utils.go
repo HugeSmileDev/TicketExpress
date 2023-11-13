@@ -1,14 +1,11 @@
 package api
 
-import (
-	"ticketing_app/proto-gen/ticket"
-)
-
-func (s *TrainService) getSectionMap(section ticket.Section) map[string][]string {
+// getSectionMap is a function to retrieve the section map based on the given section.
+func (s *TrainService) getSectionMap(section string) map[string][]string {
 	switch section {
-	case ticket.Section_SECTION_A:
+	case "A":
 		return s.sectionA
-	case ticket.Section_SECTION_B:
+	case "B":
 		return s.sectionB
 	default:
 		return nil

@@ -13,18 +13,16 @@ func (s *TrainService) RemoveUser(ctx context.Context, req *ticket.RemoveUserReq
 		return nil, errors.New("user not found")
 	}
 
-	// Remove the user from the section map
 	if err := s.removeFromSection(userDetails); err != nil {
 		return nil, err
 	}
 
-	// Remove the user from the receipt map
 	delete(s.receiptMap, req.UserId)
 
-	return &ticket.RemoveUserResponse{Message: "User removed successfully"}, nil
+	return &ticket.RemoveUserResponse{Success: true}, nil
 }
 
-func (s *TrainService) removeFromSection(userDetails *ticket.Ticket) error {
+func (s *TrainService) removeFromSection(userDetails *ticket.Receipt) error {
 	sectionMap := s.getSectionMap(userDetails.Section)
 	if sectionMap == nil {
 		return errors.New("invalid section")
