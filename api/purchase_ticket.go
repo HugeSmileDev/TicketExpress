@@ -14,14 +14,12 @@ func (s *TrainService) SubmitPurchase(ctx context.Context, req *ticketingapp.Pur
 		return nil, err
 	}
 
-	if _, exists := s.receiptMap[req.User.UserId]; exists {
-		return nil, errors.New("user with the same ID already exists")
-	}
 	receiptID := strconv.Itoa(len(s.receiptMap) + 1)
+	userID := strconv.Itoa(len(s.receiptMap) + 1)
 
 	// Allocate seat using the AllocateSeat function
 	allocateSeatReq := &ticketingapp.SeatAllocationRequest{
-		UserId:  req.User.UserId,
+		UserId:  userID,
 		SeatNo:  req.SeatNo,
 		Section: req.Section,
 	}
@@ -35,7 +33,7 @@ func (s *TrainService) SubmitPurchase(ctx context.Context, req *ticketingapp.Pur
 		From:      req.From,
 		To:        req.To,
 		User: &ticketingapp.User{
-			UserId:    req.User.UserId,
+			UserId:    userID,
 			FirstName: req.User.FirstName,
 			LastName:  req.User.LastName,
 			Email:     req.User.Email,
@@ -45,14 +43,14 @@ func (s *TrainService) SubmitPurchase(ctx context.Context, req *ticketingapp.Pur
 		PricePaid: req.PricePaid,
 	}
 
-	s.receiptMap[req.User.UserId] = receipt
+	s.receiptMap[userID] = receipt
 
 	return receipt, nil
 }
 
 func validatePurchaseTicketRequest(req *ticketingapp.PurchaseRequest) error {
 	if req.From == "" || req.To == "" || req.User.FirstName == "" || req.User.LastName == "" ||
-		req.User.Email == "" || req.User.UserId == "" || req.Section == "" || req.SeatNo == "" {
+		req.User.Email == "" || req.Section == "" || req.SeatNo == "" {
 		return errors.New("all fields are required")
 	}
 	return nil
