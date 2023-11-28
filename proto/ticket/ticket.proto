@@ -11,6 +11,7 @@ service TrainTicketService {
   rpc GetUsersBySection (SectionRequest) returns (UsersBySectionResponse);
   rpc RemoveUser (RemoveUserRequest) returns (RemoveUserResponse);
   rpc ModifySeat (ModifySeatRequest) returns (ModifySeatResponse);
+  rpc ApplyDiscount (DiscountRequest) returns (DiscountResponse);
 }
 
 message PurchaseRequest {
@@ -20,6 +21,7 @@ message PurchaseRequest {
   float price_paid = 4;
   string seat_no = 6;
   string section = 7;
+  string discount_code = 8;
 }
 
 message Receipt {
@@ -51,7 +53,7 @@ message SeatAllocationResponse {
   string section = 2;
 }
 
-// Details for recept of the user
+// Details for receipt of the user
 message ReceiptDetailsRequest {
   string receipt_id = 1;
 }
@@ -87,4 +89,13 @@ message ModifySeatRequest {
 
 message ModifySeatResponse {
   bool success = 1;
+}
+
+message DiscountRequest {
+  string receipt_id = 1;
+  string discount_code = 2;
+}
+
+message DiscountResponse {
+  Receipt updated_receipt = 1;
 }
