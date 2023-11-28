@@ -28,6 +28,9 @@ func (s *TrainService) SubmitPurchase(ctx context.Context, req *ticketingapp.Pur
 		return nil, err
 	}
 
+	// Apply discount if discount_code is provided
+	priceDeduct := getDiscountPrice(req.DiscountCode)
+
 	receipt := &ticketingapp.Receipt{
 		ReceiptId: receiptID,
 		From:      req.From,
@@ -40,7 +43,7 @@ func (s *TrainService) SubmitPurchase(ctx context.Context, req *ticketingapp.Pur
 		},
 		SeatNo:    allocateSeatResp.SeatNumber,
 		Section:   allocateSeatResp.Section,
-		PricePaid: req.PricePaid,
+		PricePaid: req.PricePaid - priceDeduct,
 	}
 
 	s.receiptMap[userID] = receipt
