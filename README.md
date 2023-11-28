@@ -9,6 +9,7 @@
 - An API that lets you view the users and seat they are allocated by the requested section
 - An API to remove a user from the train
 - An API to modify a user's seat
+- An API to make a discount (i.e. TBD123, $1 off)
 
 # Best Code Structure  
 ```ticketing_app
@@ -19,8 +20,9 @@
 │   ├── get_user_seats.go
 │   ├── modify_user_seat.go
 │   ├── module.go
-│   ├── purchase_ticket.go
+│   ├── submit_purchase.go
 │   ├── remove_user.go
+│   ├── apply_discount.go
 │   └── utils.go
 ├── go.mod
 ├── go.sum
@@ -40,6 +42,7 @@
 - ```GetUserSeats```: Get users and their allocated seats by section.
 - ```RemoveUser```: Remove a user from the train.
 - ```ModifyUserSeat```: Modify a user's seat.
+- ```ApplyDiscount```: Apply a Discount.
 
 # Run Server
 ```
